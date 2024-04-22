@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_FLOORS 20
+
+typedef enum {
+    IDLE,
+    UP,
+    DOWN
+} ElevatorState;
+
+typedef struct {
+    int currentFloor;
+    ElevatorState state;
+} Elevator;
+
+void initializeElevator(Elevator *elevator) {
+    elevator->currentFloor = 0; // Start at ground floor
+    elevator->state = IDLE;
+}
+
+void requestFloor(Elevator *elevator, int floor) {
+    if (floor > elevator->currentFloor) {
+        elevator->state = UP;
+    } else if (floor < elevator->currentFloor) {
+        elevator->state = DOWN;
+    } else {
+        printf("Elevator is already at floor %d\n", floor);
+        return;
+    }
+    printf("Elevator is moving to floor %d\n", floor);
+    while (elevator->currentFloor != floor) {
+        if (elevator->state == UP) {
+            elevator->currentFloor++;
+        } else if (elevator->state == DOWN) {
+            elevator->currentFloor--;
+        }
+        printf("Elevator is at floor %d\n", elevator->currentFloor);
+    }
+    printf("Elevator has arrived at floor %d\n", floor);
+    elevator->state = IDLE;
+}
+
+int main() {
+    Elevator elevator;
+    initializeElevator(&elevator);
+
+    int requestedFloor;
+    char choice;
+
+    do {
+        printf("Enter floor to go to (0-%d): ", MAX_FLOORS - 1);
+        scanf("%d", &requestedFloor);
+        if (requestedFloor < 0 || requestedFloor >= MAX_FLOORS) {
+            printf("Invalid floor\n");
+            continue;
+        }
+        requestFloor(&elevator, requestedFloor);
+        printf("Do you want to continue? (y/n): ");
+        scanf(" %c", &choice);
+    } while (choice == 'y' || choice == 'Y');
+
+    printf("Exiting elevator simulation\n");
+
+    return 0;
+}
